@@ -1,0 +1,28 @@
+{
+  "name": "rent-second-house-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "push": "clasp push",
+    "watch": "watch 'yarn run push' src/",
+    "format": "prettier --config .prettierrc --write \"src/**/*.ts\"",
+    "clasp": "clasp",
+    "deploy": "yarn run push && clasp deploy",
+    "undeploy": "clasp undeploy",
+    "undeploy:latest": "clasp undeploy",
+    "undeploy:all": "clasp undeploy --all",
+    "open": "clasp open",
+    "open:webapp": "clasp open --webapp"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@google/clasp": "^2.4.1",
+    "@types/google-apps-script": "^1.0.47",
+    "prettier": "^2.6.2",
+    "typescript": "^4.6.4",
+    "watch": "^1.0.2"
+  }
+}
