@@ -1,0 +1,37 @@
+{
+  "name": "rent-second-house-manager",
+  "version": "1.0.0",
+  "description": "Serverless aws-nodejs-typescript template",
+  "main": "serverless.ts",
+  "scripts": {
+    "format": "prettier --config .prettierrc --write \"**/*.ts\"",
+    "serverless": "serverless"
+  },
+  "engines": {
+    "node": ">=14.15.0"
+  },
+  "author": "TakuKobayashi",
+  "license": "MIT",
+  "dependencies": {
+    "@fastify/aws-lambda": "^3.0.0",
+    "@line/bot-sdk": "^7.5.0",
+    "fastify": "^4.2.1",
+    "firebase-admin": "^11.0.0",
+    "query-string": "^7.1.1"
+  },
+  "devDependencies": {
+    "@serverless/typescript": "^3.19.0",
+    "@types/aws-lambda": "^8.10.101",
+    "@types/node": "^18.0.3",
+    "dotenv": "^16.0.1",
+    "esbuild": "^0.14.49",
+    "prettier": "^2.7.1",
+    "serverless": "^3.20.0",
+    "serverless-dotenv-plugin": "^4.0.1",
+    "serverless-esbuild": "^1.31.0",
+    "serverless-offline": "^8.8.1",
+    "ts-node": "^10.8.2",
+    "tsconfig-paths": "^4.0.0",
+    "typescript": "^4.7.4"
+  }
+}
