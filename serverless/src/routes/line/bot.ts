@@ -4,6 +4,8 @@ import { lineBotRichmenuRouter } from './extends/richmenu';
 import { lineBotClient, lineUsersCollectionName } from '../../types/line';
 import fs from 'fs';
 
+const firestore = setupFireStore();
+
 export async function lineBotRouter(app, opts): Promise<void> {
   app.get('/', async (req, res) => {
     res.send('hello line');
@@ -38,13 +40,12 @@ export async function lineBotRouter(app, opts): Promise<void> {
 
 async function handleEvent(event): Promise<void> {
   console.log(event);
-  const firestore = setupFireStore();
   if (event.type === 'follow') {
     const profile = await lineBotClient.getProfile(event.source.userId);
-    console.log(profile);
     await firestore.collection(lineUsersCollectionName).doc(event.source.userId).set({
-      displayName: profile.displayName,
-      pictureUrl: profile.pictureUrl,
+      line_user_id: event.source.userId,
+      display_name: profile.displayName,
+      picture_url: profile.pictureUrl,
     });
   } else if (event.type === 'unfollow') {
     await firestore.collection(lineUsersCollectionName).doc(event.source.userId).delete();
@@ -62,9 +63,9 @@ async function handleEvent(event): Promise<void> {
       const echo: LocationMessage = {
         type: 'location',
         title: event.message.address,
-        address: event.message.address,
-        latitude: event.message.latitude,
-        longitude: event.message.longitude,
+        address: "東京都府中市西府町1-40-12",
+        latitude: 35.6735238,
+        longitude: 139.4516319,
       };
       await lineBotClient.replyMessage(event.replyToken, echo);
     } else if (event.message.type === 'audio') {
