@@ -52,59 +52,104 @@ async function handleEvent(event): Promise<void> {
     await firestore.collection(lineUsersCollectionName).doc(event.source.userId).delete();
   } else if (event.type === 'postback') {
     const postbackDataObj = parse(event.postback.data);
-    if (postbackDataObj.action === "house_location") {
-    }else if (postbackDataObj.action === "request_reserve") {
-    }else if (postbackDataObj.action === "reserve_input_start_datetime") {
-      const startDate = new Date(event.postback.params.datetime);
+    if (postbackDataObj.action === 'house_location') {
+      const echo: LocationMessage = {
+        type: 'location',
+        title: event.message.address,
+        address: '東京都府中市西府町1-40-12',
+        latitude: 35.6735238,
+        longitude: 139.4516319,
+      };
+      await lineBotClient.replyMessage(event.replyToken, echo);
+    } else if (postbackDataObj.action === 'request_reserve') {
+      const now = new Date();
       const echo: TemplateMessage = {
         type: 'template',
-        altText: 'will reserve date',
+        altText: 'Input start datetime will be reserved',
         template: {
           type: 'buttons',
-          text: '予約したい日時を入力してください',
+          text: '利用開始はいつからですか?',
           actions: [
             {
-              type: "datetimepicker",
-              data: stringify({action: "reserve_input_end_datetime"}),
-              mode: "datetime",
-              label: '予約終了日時を入力してください',
+              type: 'datetimepicker',
+              data: stringify({ action: 'reserve_input_start_datetime' }),
+              mode: 'datetime',
+              label: '日時を入力',
+            },
+          ],
+        },
+      };
+      await lineBotClient.replyMessage(event.replyToken, echo);
+    } else if (postbackDataObj.action === 'reserve_input_start_datetime') {
+      const startDate = new Date(event.postback.params.datetime);
+      console.log(startDate);
+      const echo: TemplateMessage = {
+        type: 'template',
+        altText: 'Input end datetime will be reserved',
+        template: {
+          type: 'buttons',
+          text: '利用終了はいつですか?',
+          actions: [
+            {
+              type: 'datetimepicker',
+              data: stringify({ action: 'reserve_input_end_datetime' }),
+              mode: 'datetime',
+              label: '日時を入力',
               min: event.postback.params.datetime,
             },
           ],
         },
       };
-//      const echo: TextMessage = { type: 'text', text: event.message.text };
+      //      const echo: TextMessage = { type: 'text', text: event.message.text };
       await lineBotClient.replyMessage(event.replyToken, echo);
-    }else if (postbackDataObj.action === "reserve_input_end_datetime") {
-    }else if (postbackDataObj.action === "reserve") {
+    } else if (postbackDataObj.action === 'reserve_input_end_datetime') {
+      const echo: TemplateMessage = {
+        type: 'template',
+        altText: 'Input end datetime will be reserved',
+        template: {
+          type: 'confirm',
+          text: '予約しますか??',
+          actions: [
+            {
+              type: 'postback',
+              label: '予約する',
+              data: stringify({ action: 'reserve' }),
+            },
+            {
+              type: 'postback',
+              label: '予約しない',
+              data: stringify({ action: 'unreserve' }),
+            },
+          ],
+        },
+      };
+      await lineBotClient.replyMessage(event.replyToken, echo);
+    } else if (postbackDataObj.action === 'reserve') {
+      const echo: TextMessage = { type: 'text', text: '予約が完了しました' };
+      await lineBotClient.replyMessage(event.replyToken, echo);
+    } else if (postbackDataObj.action === 'unreserve') {
+      const echo: TextMessage = { type: 'text', text: '予約しませんでした' };
+      await lineBotClient.replyMessage(event.replyToken, echo);
     }
   } else if (event.type === 'message') {
     if (event.message.type === 'text') {
-      const now  = new Date()
+      const now = new Date();
       const echo: TemplateMessage = {
         type: 'template',
         altText: 'will reserve date',
         template: {
           type: 'buttons',
-          text: '予約したい日時を入力してください',
+          text: '利用開始はいつからですか?',
           actions: [
             {
-              type: "datetimepicker",
-              /**
-               * String returned via webhook in the `postback.data` property of the
-               * postback event (Max: 300 characters)
-               */
-              data: stringify({action: "reserve_input_start_datetime"}),
-              mode: "datetime",
-              /**
-               * Initial value of date or time
-               */
-              label: '予約開始日時を入力してください',
+              type: 'postback',
+              data: stringify({ action: 'request_reserve' }),
+              label: '予約を開始する',
             },
           ],
         },
       };
-//      const echo: TextMessage = { type: 'text', text: event.message.text };
+      //      const echo: TextMessage = { type: 'text', text: event.message.text };
       await lineBotClient.replyMessage(event.replyToken, echo);
     } else if (event.message.type === 'image') {
       const content = await lineBotClient.getMessageContent(event.message.id);
@@ -115,7 +160,7 @@ async function handleEvent(event): Promise<void> {
       const echo: LocationMessage = {
         type: 'location',
         title: event.message.address,
-        address: "東京都府中市西府町1-40-12",
+        address: '東京都府中市西府町1-40-12',
         latitude: 35.6735238,
         longitude: 139.4516319,
       };
